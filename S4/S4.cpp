@@ -3311,10 +3311,10 @@ int Simulation_MakeExcitationPlanewave(S4_Simulation *S, const double angle[2], 
 
 	// At normal incidence, we assume
 	// {0,0,k} is the k-vector
-	// {e_s, e_p, 0} is the electric field
+	// {e_p, e_s, 0} is the electric field
 	// e_s is the s-polarization complex ampltiude
 	// so then the magnetic field is
-	// {-e_p, e_s, 0}
+	// {-e_s, e_p, 0}
 	// Now we apply a rotation in the xz-plane by angle[0], then in the xy-plane by angle[1]
 	// [ cos1 -sin1  0 ] [  cos0  0  sin0 ] [ x ]   [  x*cos0*cos1 - y*sin1 + z*cos1*sin0 ]
 	// [ sin1  cos1  0 ] [   0    1   0   ] [ y ] = [  x*cos0*sin1 + y*cos1 + z*sin1*sin0 ]
