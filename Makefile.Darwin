@@ -2,7 +2,7 @@ OBJDIR = build
 SHLIB_EXT = so
 SHLIB_FLAGS = -bundle -undefined dynamic_lookup
 LA_LIBS = -framework Accelerate
-LUA_INC = -I/usr/local/include/lua5.2
+LUA_INC = -I/usr/local/include/lua
 LUA_LIB = -L/usr/local/lib -llua
 LUA_MODULE_LIB =
 
