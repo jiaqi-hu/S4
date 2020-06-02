@@ -51,10 +51,13 @@
 void fft_init(void);
 void fft_destroy(void);
 
+#if PY_MAJOR_VERSION >= 3
+//https://readthedocs.org/projects/py3c/downloads/pdf/latest/
+#define PyString_Check(...) PyUnicode_Check(__VA_ARGS__)
+#endif
 
 static int CheckPyNumber(PyObject *obj){
-	return PyFloat_Check(obj) || PyLong_Check(obj)
-#if PY_MAJOR_VERSION < 3
+	return PyFloat_Check(obj) || PyLong_Check(obj)#if PY_MAJOR_VERSION < 3
 		|| PyInt_Check(obj)
 #endif
 	;
@@ -109,10 +112,23 @@ static long GetPyInt(PyObject *obj){
 #endif
 }
 
+static char* GetPyStringAndSize(PyObject *obj, Py_ssize_t *size)
+{
+
+//#define PyString_AsStringAndSize(...) PyUnicode_AsUTF8AndSize(__VA_ARGS__)
+#if PY_MAJOR_VERSION < 3
+    char* c = NULL;
+    PyString_AsStringAndSize(obj, &c, size);
+    return c;
+#else
+    return PyUnicode_AsUTF8AndSize(obj,size);
+#endif
+
+}
+
 void HandleSolutionErrorCode(const char *fname, int code){
 	static const char def[] = "An unknown error occurred";
-	static const char* errstr[] = {
-		def, /* 0 */
+	static const char* errstr[] = {		def, /* 0 */
 		"A memory allocation error occurred", /* 1 */
 		def, /* 2 */
 		def, /* 3 */
@@ -339,20 +355,18 @@ int excitation_converter(PyObject *obj, S4Excitation_Data *data)
 			PyErr_SetString(PyExc_TypeError, "the G index must be a integer.");
 			return 0;
 		}
-		data->exg[2 * i + 0] = PyInt_AsLong(pj);
+		data->exg[2 * i + 0] = GetPyInt(pj);
 
 		//get polarization: 'x' or 'y'
-		pj = PyTuple_GetItem(pi, 1);
-		if(!PyString_Check(pj))
+		pj = PyTuple_GetItem(pi, 1);		if(!PyString_Check(pj))
 		{
 			PyErr_SetString(PyExc_TypeError, "polalization should be specified by 'x' or 'y'.");
 			return 0;
 		}
-		PyString_AsStringAndSize(pj, &pol, &polLen);
+        pol = GetPyStringAndSize(pj, &polLen);
 		if(1 != polLen || ('x' != pol[0] && 'y' != pol[0]))
 		{
-			PyErr_SetString(PyExc_TypeError, "polalization should be specified by 'x' or 'y'.");
-			return 0;
+			PyErr_SetString(PyExc_TypeError, "polalization should be specified by 'x' or 'y'.");			return 0;
 		}
 		if('x' == pol[0])
 			data->exg[2 * i + 1] = 0;
@@ -946,11 +960,10 @@ static PyObject *S4Sim_SetExcitationExterior(S4Sim *self, PyObject *args, PyObje
 		return NULL;
 	}
 
-	err = Simulation_MakeExcitationExterior(self->S, exciData.n, exciData.exg, exciData.ex);
+    err = S4_Simulation_ExcitationExterior(self->S, exciData.n, exciData.exg, exciData.ex);
 	free(exciData.exg); exciData.exg = NULL;
 	free(exciData.ex); exciData.ex = NULL;
-	if(0 != err)
-	{
+	if(0 != err)	{
 		HandleSolutionErrorCode("S4Sim_SetExcitationExterior", err);
 		return NULL;
 	}

@@ -10,17 +10,16 @@
 #   SHLIB_EXT (so, dll)
 #   SHLIB_FLAGS
 
-CPPFLAGS += -IS4 -IS4/RNP -IS4/kiss_fft
+CPPFLAGS += -IS4 -IS4/RNP -IS4/kiss_fft -Werror=implicit-function-declaration
 
 #### Compilation targets
 
 S4_LIBNAME = libS4.a
 
-all: $(OBJDIR)/$(S4_LIBNAME) $(OBJDIR)/S4 modules
+all: $(OBJDIR)/$(S4_LIBNAME) $(OBJDIR)/S4 modules py3
 S4mpi: $(OBJDIR)/S4mpi
 
-objdir:
-	mkdir -p $(OBJDIR)
+objdir:	mkdir -p $(OBJDIR)
 	mkdir -p $(OBJDIR)/S4k
 	mkdir -p $(OBJDIR)/modules
 
@@ -140,10 +139,14 @@ S4_pyext: objdir $(OBJDIR)/libS4.a
 	echo "$(LIBS)" > $(OBJDIR)/tmp.txt
 	sh gensetup.py.sh $(OBJDIR) $(OBJDIR)/$(S4_LIBNAME)
 	python setup.py build
+	
+py3: objdir $(OBJDIR)/libS4.a
+	echo "$(LIBS)" > $(OBJDIR)/tmp.txt
+	sh gensetup.py.sh $(OBJDIR) $(OBJDIR)/$(S4_LIBNAME)
+	python3 setup.py build
 
 clean:
 	rm -rf $(OBJDIR)
-
 #### S4v2 extension
 $(OBJDIR)/S4v2.$(SHLIB_EXT): $(OBJDIR)/$(S4_LIBNAME) S4/ext_lua.c
 	$(CC) $(SHLIB_FLAGS) $(LUA_INC) S4/ext_lua.c -o $@ $(LUA_MODULE_LIB) -L$(OBJDIR) -lS4 $(LA_LIBS) -lstdc++

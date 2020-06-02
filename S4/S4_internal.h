@@ -230,11 +230,9 @@ int Simulation_ChangeLayerThickness(S4_Simulation *S, S4_Layer *layer, const dou
 // Returns 14 if no layers present
 // exg is length 2*n, pairs of G index (1-based index, negative for backwards modes), and 0,1 polarization (E field x,y)
 // ex is length 2*n, pairs of re,im complex coefficients
-int Simulation_MakeExcitationExterior(S4_Simulation *S, int n, const int *exg, const double *ex);
 int Simulation_MakeExcitationPlanewave(S4_Simulation *S, const double angle[2], const double pol_s[2], const double pol_p[2], size_t order);
 int Simulation_MakeExcitationDipole(S4_Simulation *S, const double k[2], const char *layer, const double pos[2], const double moment[6]);
-
-
+
 // Internal functions
 #ifdef __cplusplus
 // Field cache manipulation

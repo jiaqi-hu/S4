@@ -1,6 +1,24 @@
+#############################################
+No idea who wrote the below stuff, but this is what I have found to work:
+
+cd S4-vl
+# make clean (just the below command)
+rm -rf build
+make py3
+pip3 install .
+./s4test.py # to confirm that it works
+
+# will need to have numpy installed for the test
+sudo -H pip3 install numpy
+# for the scripts I have actually using it also matplotlib and scipy
+sudo -H pip3 install matplotlib scipy
+
+
+
+#############################################
+
 Installation Instructions
 *************************
-
 Copyright (C) 1994-1996, 1999-2002, 2004-2011 Free Software Foundation,
 Inc.
 
