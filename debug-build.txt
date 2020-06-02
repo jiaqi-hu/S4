@@ -1,0 +1,9 @@
+#make clean
+rm -rf build
+swap the comments on the C??FLAGS and all in Makefile.Linux:
+
+# CFLAGS += -O0 -g -Wall -march=native -fcx-limited-range -fno-exceptions -fPIC
+# CXXFLAGS += -O0 -g -Wall -march=native -fcx-limited-range -fno-exceptions -fPIC
+
+make py3
+CFLAGS=-O0 -g CXXFLAGS=-O0 -g python3 setup.py install --user
