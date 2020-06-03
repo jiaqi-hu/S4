@@ -19,7 +19,8 @@ S4_LIBNAME = libS4.a
 all: $(OBJDIR)/$(S4_LIBNAME) $(OBJDIR)/S4 modules py3
 S4mpi: $(OBJDIR)/S4mpi
 
-objdir:	mkdir -p $(OBJDIR)
+objdir:
+	mkdir -p $(OBJDIR)
 	mkdir -p $(OBJDIR)/S4k
 	mkdir -p $(OBJDIR)/modules
 
@@ -144,6 +145,11 @@ py3: objdir $(OBJDIR)/libS4.a
 	echo "$(LIBS)" > $(OBJDIR)/tmp.txt
 	sh gensetup.py.sh $(OBJDIR) $(OBJDIR)/$(S4_LIBNAME)
 	python3 setup.py build
+	python3 setup.py install --user
+	
+test: py3
+	./s4test.py
+	# gdb -ex=run --args python3 ./s4test.py
 
 clean:
 	rm -rf $(OBJDIR)

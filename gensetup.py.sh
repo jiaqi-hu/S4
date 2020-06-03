@@ -12,7 +12,10 @@ S4module = Extension('S4',
 	],
 	libraries = [
 		'S4',
-		'stdc++'
+		'stdc++',
+		# added by Nathan
+		'lapack',
+		'blas',
 	],
 	library_dirs = ['$OBJDIR'],
 	extra_link_args = [
