@@ -17,7 +17,7 @@ S.AddLayer('top',0,'Air')
 S.AddLayer('slab',0.5,'Silicon')
 S.AddLayerCopy('bottom',0,'top')
 #S.SetRegionCircle('slab','Vacuum',(0,0),0.2)
-if False:
+if True:
     S.SetRegionEllipse(
         Layer = 'slab',
         Material = 'Vacuum',
