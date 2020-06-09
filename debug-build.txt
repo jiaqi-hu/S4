@@ -1,5 +1,12 @@
 #make clean
 rm -rf build
+
+NEW:
+just use (on Linux)
+make DEBUG=1
+
+
+OLD:
 swap the comments on the C??FLAGS and all in Makefile.Linux:
 
 # CFLAGS += -O0 -g -Wall -march=native -fcx-limited-range -fno-exceptions -fPIC
