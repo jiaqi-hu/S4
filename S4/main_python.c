@@ -834,7 +834,7 @@ static PyObject *S4Sim_RemoveLayerRegions(S4Sim *self, PyObject *args, PyObject 
 		PyErr_Format(PyExc_RuntimeError, "RemoveLayerRegions: S4_Layer named '%s' not found.", name);
 		return NULL;
 	}else{
-		Simulation_RemoveLayerPatterns(self->S, layer);
+		Simulation_RemoveLayerPatterns(self->S, &(self->S->layer[layer]));
 	}
 	Py_RETURN_NONE;
 }
@@ -1073,7 +1073,7 @@ static PyObject *S4Sim_OutputLayerPatternRealization(S4Sim *self, PyObject *args
 		return NULL;
 
 	layer = S4_Simulation_GetLayerByName(self->S, layerName);
-	if(NULL == layer)
+	if(layer < 0)
 	{
 		PyErr_Format(PyExc_RuntimeError, "OutputLayerPatternRealization: S4_Layer named '%s' not Found.", layerName);
 		return NULL;
@@ -1110,7 +1110,7 @@ static PyObject *S4Sim_OutputLayerPatternPostscript(S4Sim *self, PyObject *args,
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s|s:OutputLayerPatternPostscript", kwlist, &layername, &filename)){ return NULL; }
 
 	layer = S4_Simulation_GetLayerByName(self->S, layername);
-	if(NULL == layer){
+	if(layer < 0){
 		PyErr_Format(PyExc_RuntimeError, "OutputLayerPatternPostscript: S4_Layer named '%s' not found.", layername);
 		return NULL;
 	}
@@ -1194,7 +1194,7 @@ static PyObject *S4Sim_GetAmplitudes(S4Sim *self, PyObject *args, PyObject *kwds
 	const char *layername;
 	double offset = 0;
 	double *amp;
-	S4_LayerID layer;
+	S4_Layer* layer;
 	PyObject *rv, *rventry;
 
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s|d:GetAmplitudes", kwlist, &layername, &offset)){ return NULL; }
@@ -1259,7 +1259,7 @@ static PyObject *S4Sim_GetPowerFluxByOrder(S4Sim *self, PyObject *args, PyObject
 	const char *layername;
 	double offset = 0;
 	double *power;
-	S4_LayerID layer;
+	S4_Layer* layer;
 	PyObject *rv;
 
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s|d:GetPowerFluxByOrder", kwlist, &layername, &offset)){ return NULL; }
@@ -1300,7 +1300,7 @@ static PyObject *S4Sim_GetStressTensorIntegral(S4Sim *self, PyObject *args, PyOb
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s|d:GetStressTensorIntegral", kwlist, &layername, &offset)){ return NULL; }
 
 	layer = S4_Simulation_GetLayerByName(self->S, layername);
-	if(NULL == layer){
+	if(layer < 0){
 		PyErr_Format(PyExc_RuntimeError, "GetStressTensorIntegral: S4_Layer named '%s' not found.", layername);
 		return NULL;
 	}
@@ -1324,7 +1324,7 @@ static PyObject *S4Sim_GetLayerVolumeIntegral(S4Sim *self, PyObject *args, PyObj
 	const char *strwhat;
 	double integral[2];
 	char which = 'U';
-	S4_LayerID layer;
+	S4_Layer* layer;
 
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "ss:GetLayerVolumeIntegral", kwlist, &layername, &strwhat)){ return NULL; }
 
@@ -1360,12 +1360,12 @@ static PyObject *S4Sim_GetLayerZIntegral(S4Sim *self, PyObject *args, PyObject *
 	static char *kwlist[] = { "Layer", "xy", NULL };
 	const char *layername;
 	double integral[6], r[2];
-	S4_LayerID layer;
+	S4_Layer* layer;
 
 	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s(dd):GetLayerZIntegral", kwlist, &layername, &r[0], &r[1])){ return NULL; }
 
-	layer = S4_Simulation_GetLayerByName(self->S, layername);
-	if(NULL == layer){
+	layer = Simulation_GetLayerByName(self->S, layername, NULL);
+	if(layer == NULL){
 		PyErr_Format(PyExc_RuntimeError, "GetLayerZIntegral: S4_Layer named '%s' not found.", layername);
 		return NULL;
 	}
