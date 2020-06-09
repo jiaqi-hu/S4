@@ -10,13 +10,15 @@
 #   SHLIB_EXT (so, dll)
 #   SHLIB_FLAGS
 
-CPPFLAGS += -IS4 -IS4/RNP -IS4/kiss_fft -Werror=implicit-function-declaration
+CPPFLAGS += -IS4 -IS4/RNP -IS4/kiss_fft
+CFLAGS += -Werror=implicit-function-declaration
 
 #### Compilation targets
 
 S4_LIBNAME = libS4.a
 
-all: $(OBJDIR)/$(S4_LIBNAME) $(OBJDIR)/S4 modules py3
+#all: $(OBJDIR)/$(S4_LIBNAME) $(OBJDIR)/S4 modules py3
+all: $(OBJDIR)/$(S4_LIBNAME) py3
 S4mpi: $(OBJDIR)/S4mpi
 
 objdir:
@@ -102,8 +104,11 @@ $(OBJDIR)/S4k/Interpolator.o: S4/Interpolator.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 $(OBJDIR)/S4k/convert.o: S4/convert.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	
+# Without requireing that this be only optimization level 2 (-O2) the output is garbage.
+# TODO: Fix it. But for now I'm just leaving it as it is.
 $(OBJDIR)/S4k/Eigensystems.o: S4/RNP/Eigensystems.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -O2 $< -o $@
 
 #### Lua Frontend
 
@@ -141,7 +146,7 @@ S4_pyext: objdir $(OBJDIR)/libS4.a
 	sh gensetup.py.sh $(OBJDIR) $(OBJDIR)/$(S4_LIBNAME)
 	python setup.py build
 	
-py3: objdir $(OBJDIR)/libS4.a
+py3: objdir $(OBJDIR)/libS4.a $(S4_LIBOBJS) S4/main_python.c
 	echo "$(LIBS)" > $(OBJDIR)/tmp.txt
 	sh gensetup.py.sh $(OBJDIR) $(OBJDIR)/$(S4_LIBNAME)
 	python3 setup.py build
